@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link href="css/stylesheet.css" rel="stylesheet" type="text/css">
+	<title>untitled</title>
+</head>
+
+<body>
+<h1 id="releasenotes">Release Notes</h1>
+
+<h2 id="">2012&#8211;07&#8211;09</h2>
+
+<ul>
+<li>Signed for Gatekeeper.</li>
+<li>Using ⌃K at the end of a line now deletes the newline.</li>
+<li>Implement <code>moveToBeginning/EndOfParagraphAndModifySelection:</code> selectors. The default key bindings have ⌃⇧E extend selection to end of paragraph (so was previously a no-op in TM).</li>
+<li>The <code>.tm_properties</code> parser no longer require spaces around the equal character nor is there a need to quote section names when they contain special characters, etc. The full grammar can be found in the help book.</li>
+<li>Disable font ligatures. Using the Mensch font on Lion (but not Snow Leopard) would previously render ‘fi’ using the ‘fi’ ligature.</li>
+<li>Fix drawing issues for Retina Mac Books (horizontal lines would appear while scrolling).</li>
+<li>The Select Bundle Item window now use the same key equivalent control as the bundle editor.</li>
+<li>Improve keyboard usage with key equivalent control. You can tab to/from the control, when the control has focus you can use forward/backward delete to remove the current key equivalent or space to record a new one. Clicking the control using the mouse will go directly to record mode.</li>
+<li>When closing the preferences window pending edits of the variables will be committed.</li>
+<li>If a bundle item contained an empty string for key equivalent, the bundle editor would crash when showing that item.</li>
+<li>When recording a key equivalent in the bundle editor, global hotkeys are disabled. This means you can bind to keys that may not actually work on your system (because another application or system service is swallowing the event).</li>
+<li>Commands which use ssh should now work even if the private key has a passphrase (e.g. the Subversion commands).</li>
+<li>Improve clicking various UI elements (e.g. the close button in tabs) for inactive windows.</li>
+<li>Add clear button to key equivalent recorder.</li>
+<li>Fix file browser crash when duplicating files which had a suffix one character longer than the base name.</li>
+<li>Support services.</li>
+<li>Request administration rights when required by the software update process.</li>
+<li>Fix missing repeat events (on Lion) for characters with no potential diacritics.</li>
+<li>Fixed crash resulting from clicking and holding mouse exactly on a caret, starting a drag operation and dropping the (empty) selection.</li>
+<li>Show dialog for (some) keychain failures. The license key is stored in and retrieved from the keychain, so errors will cause TextMate to not run. I suspect there is an issue where TextMate “loses” its signed state and is denied access to the keychain, as a few users have reported sudden problems which were resolved simply by moving TextMate on disk.</li>
+<li>When switching tabs, selection was drawn as if in a background window.</li>
+</ul>
+
+<h2 id="">2012&#8211;02&#8211;27</h2>
+
+<ul>
+<li>Restore UI sounds for 10.7.</li>
+<li>Bundle editor now use a key equivalent recorder (instead of text field).</li>
+<li>Fixed issue with involuntary folder expansion when using ⌥⌘N with focus in file browser (missed by previous “fix”).</li>
+<li>Dropped support for Mac OS X 10.5.</li>
+</ul>
+
+<h2 id="">2012&#8211;02&#8211;18</h2>
+
+<ul>
+<li><p>Improved SCM workaround for Mercurial issue — previous workaround could leave SCM status outdated, this should no longer be the case.</p></li>
+<li><p>Fix problem with items that differed only in capitalization. These were collapsed into a single item in several UI menus/dialogs, e.g. Open Favorites.</p></li>
+<li><p>Fix bad encoding when copying Find in Folder / Find All results.</p></li>
+<li><p>Using Go to Counterpart no longer include files matched by the effective <code>binary</code> or <code>exclude</code> glob from <code>.tm_properties</code>.</p></li>
+<li><p>Changed <code>binary</code> setting in <code>.tm_properties</code> from a boolean to a glob. This allows to set a global binary glob instead of needing to set the boolean for specific settings (which is more complex to manage via a GUI).</p></li>
+<li><p>Introduce <code>attr.file.unknown-type</code> and <code>attr.file.unknown-encoding</code>. You can use this in <code>.tm_properties</code> files to set <code>fileType</code> and <code>encoding</code> to provide default values only for files where TextMate was unable to find the proper type/encoding (which normally results in a dialog asking the user).</p></li>
+<li><p>Cached <code>.tm_properties</code> files are now observed via <code>kevent</code> so changes invalidate the cache immediately (previously it could take up to 30 seconds before the updated file was read). On file systems without <code>kevent</code> support you need to relaunch TextMate to flush the cache.</p></li>
+<li><p>The sections in <code>.tm_properties</code> files are now considered real scope selectors. As the syntax for globs and scope selectors is the same, the latter must start with <code>attr</code>, <code>source</code>, or <code>text</code> to indicate it is a scope selector. If your desired scope selector does not, you can always prefix it (with the always present <code>attr</code>) e.g.: <code>[ &quot;attr - attr.scm&quot; ]</code> to have settings for files not under version control. This should just be temporary while exact requirements are being fleshed out.</p></li>
+<li><p>Introduce <code>TM_SCM_BRANCH</code> variable (mainly useful for setting <code>windowTitle</code> in <code>.tm_properties</code>).</p></li>
+<li><p>You can augment the rules for scope attributes by saving a property list to <code>~/Library/Application Support/TextMate/ScopeAttributes.plist</code>. Your rules will be added to the default list which is:</p>
+
+<pre><code>{
+    rules = (
+        { attribute = 'attr.scm.svn';       glob = '.svn';        group = 'scm';   },
+        { attribute = 'attr.scm.hg';        glob = '.hg';         group = 'scm';   },
+        { attribute = 'attr.scm.git';       glob = '.git';        group = 'scm';   },
+        { attribute = 'attr.scm.p4';        glob = '.p4config';   group = 'scm';   },
+        { attribute = 'attr.project.make';  glob = 'Makefile';    group = 'build'; },
+        { attribute = 'attr.project.rake';  glob = 'Rakefile';    group = 'build'; },
+        { attribute = 'attr.project.xcode'; glob = '*.xcodeproj'; group = 'build'; },
+    );
+}
+</code></pre>
+
+<p>The <code>group</code> is to allow mutually exclusive attributes. E.g. if a folder contains both a <code>Rakefile</code> and a <code>Makefile</code> entry, files in that folder only get the <code>attr.project.make</code> attribute set since the two tests are in same group (and the <code>Makefile</code> test is listed first).</p></li>
+<li><p>Added <em>View → Show Wrap Column</em> setting and corresponding <code>showWrapColumn</code> <code>.tm_properties</code> setting.</p></li>
+<li><p>Introduced <code>fontLeadingDelta</code> and <code>fontAscentDelta</code> defaults keys. These must be set as floats or integers (not strings), e.g.: <code>defaults write com.macromates.TextMate.preview fontLeadingDelta -float 0</code>. The default value for both keys is <code>1</code>.</p></li>
+<li><p>Use of extended attributes can now be disabled. The defaults key is <code>volumeSettings</code> and the value is an associative array with path prefix and another associative array with settings for that path (presently only <code>extendedAttributes</code> is supported, but SCM badges, display names, and more is likely to appear). So if for example we wish to disable extended attributes for files under <code>/net/</code> we can do: <code>defaults write com.macromates.TextMate.preview volumeSettings '{ &quot;/net/&quot; = { extendedAttributes = 0; }; }'</code>.</p></li>
+<li>Some improvements to file chooser (⌘T):
+
+<ul>
+<li>Current document is now included in list, and if typed exactly, will rank at top.</li>
+<li>Filter string is now down-cased with spaces removed before matching to cater to the habits of some users.
+<!-- - Typing `:` or `@` without a filter string will go to line/symbol in current file (rather than currently selected file). --></li>
+<li>Raw paths are shown instead of display names, which should be faster (especially on network file systems).</li>
+<li>Subtle ranking improvements.</li>
+</ul></li>
+<li><p>The font size unit parser (for themes) is no longer locale sensitive (so period is always <code>.</code>).</p></li>
+<li><p>The collapse/expand all button for the Find in Folder results did not properly refresh the outline view on Lion.</p></li>
+<li><p>Implement option page up/down (for moving caret).</p></li>
+<li><p>Set <code>initialFileBrowserURL</code> defaults key (to a URL) to change the initial location of the file browser (for new windows). E.g.: <code>defaults write com.macromates.TextMate.preview initialFileBrowserURL &quot;file://$HOME/Source/&quot;</code>.</p></li>
+<li><p>Default location for <code>mate</code> is now <code>/usr/local/bin</code> (if it exists) as this is included in the <code>PATH</code> for most users.</p></li>
+<li><p>Fix failure to install <code>mate</code> when the install path existed as a dead symbolic link.</p></li>
+<li><p>Fix issues with involuntary (recursive) expansion of file browser.</p></li>
+<li><p>Support transparent backgrounds in themes.</p></li>
+<li><p>Exclude binary matches for folder searching.</p></li>
+<li><p>It’s now possible to change case in the file browser (previously a “file exists” error was shown for case-insensitive systems).</p></li>
+<li><p>Fix issue with the <code>txmt:</code> URL scheme (though omitting the <code>file</code> parameter is still not supported).</p></li>
+</ul>
+
+<h2 id="">2011&#8211;12&#8211;20</h2>
+
+<ul>
+<li>Rename <em>Beta Builds</em> to <em>Nightly Builds</em> (Preferences → Software Update). This will be semi-daily builds that might have minor regressions (like e.g. the out-of-date SCM badges mentioned below), as I plan to do these frequently (but at most once per day). With Christmas coming up in four days (and me being in charge this year) don’t expect too many updates in the coming days though; I’m still working my way through reported issues.</li>
+<li>Don’t add documents to recent menu when opened via file browser.</li>
+<li>Fix the previously introduced <code>callback.application.did-(de)activate</code> semantic classes.</li>
+<li>Asking for SCM status now use selected folder over file browser root.</li>
+<li>Provide document name in Save As dialog.</li>
+<li>Fix issue with proxy auto-configuration scripts.</li>
+<li>The <code>htmlOutputPlacement</code> defaults value can now be set to <code>right</code> to get the split to the right of the document. The width is presently not persisted across relaunches (and defaults to 100px).</li>
+<li>Throttle SCM status polls. This is a provisional fix for mercurial issues which can cause SCM badges to be out of date.</li>
+</ul>
+
+<h2 id="">2011&#8211;12&#8211;18</h2>
+
+<ul>
+<li><p>Introduced <code>callback.application.did-activate</code> and <code>callback.application.did-deactivate</code> as two new semantic classes. A command with this class will be executed when the application gain/lose focus. The scope selector is matched against the “current scope” of the visible document (in each window). This allows creating a command with “Save” set to “Modified Documents” and thereby recreating TextMate 1.x’s ability to save modified documents on lost focus.</p>
+
+<p>The approach in 2.0 also allows to run some code, for example reloading the currently open browsers, and it can be scoped e.g. to <code>text.html</code> to only have the “save on lost focus” enabled when editing HTML files — alternatively one can introduce a custom scope like <code>attr.save-on-deactivate</code> and set that for specific projects via a <code>scopeAttributes</code> setting in <code>.tm_properties</code>.</p></li>
+<li><p>Tab bar can be made always visible: <code>defaults write com.macromates.TextMate.preview disableTabBarCollapsing -bool YES</code>.</p></li>
+<li><p>Fix issue with indented soft wrap having the prefix string wider than the wrap column.</p></li>
+<li><p>Fix issue with selection sent to commands needing entire document (e.g. ⌘R for Ruby, Python, etc.).</p></li>
+<li><p>Fix issue with ⌃⇥ not always working to move focus to file browser.</p></li>
+<li><p>Remove folding patterns from grammar template.</p></li>
+</ul>
+
+<h2 id="">2011&#8211;12&#8211;16</h2>
+
+<ul>
+<li>HTML output can open in its own window: <code>defaults write com.macromates.TextMate.preview htmlOutputPlacement window</code>.</li>
+<li>Anti-alias can be disabled: <code>defaults write com.macromates.TextMate.preview disableAntiAlias -bool YES</code>.</li>
+<li>File browser can be placed on the right side: <code>defaults write com.macromates.TextMate.preview fileBrowserPlacement right</code>.</li>
+<li>With multiple carets, ⌘-clicking one of them removes it (i.e. it’s a toggle).</li>
+<li>Carriage returns (<code>&lt;CR&gt;</code>) on the general clipboard are converted to regular newlines when pasting.</li>
+<li>Rename help book to “TextMate 2” which fixes issues where <em>Help → TextMate Help</em> showed TextMate 1.5’s help book.</li>
+<li>TextMate 1.x and 2.0 can now both run at the same time.</li>
+<li>Setting <code>TM_HG</code> and <code>TM_GIT</code> in Preferences is no longer eclipsed by the default properties (which set them to point at <code>/opt/local/bin</code>).</li>
+<li>Fix potential crash when deleting bundles on disk (<code>rm -rf</code>).</li>
+</ul>
+
+<hr />
+
+<h2 id="">2011&#8211;12&#8211;13</h2>
+
+<p>Notable changes since to TextMate 1.5.10:</p>
+
+<ul>
+<li><p><strong>Multiple carets / discontinuous selection</strong></p>
+
+<p>The easiest way to get multiple carets is by doing a left or right movement command (like arrow left/right) with a column selection. You can also ⌘-click to place new carets or use <em>Edit → Find All</em> (⌥⌘F).</p></li>
+<li><p><strong>Snippets</strong></p>
+
+<p>New syntax for pop-up menus: <code>${1|first,second,…,last|}</code>. In a Git commit message try <code>fixup⇥</code> to get a pop-up of your last 10 commit messages (for a <code>fixup!</code>-commit) or between <code>@interface</code>…<code>@end</code> in Objective-C you can try <code>prop⇥</code> to get a <code>@property</code>-declaration with pop-up for its access type.</p>
+
+<p>Snippets can be nested, a frequent request but it does cause a few false firings of snippets which we haven’t yet found a good solution for.</p></li>
+<li><p><strong>Movement / Selection</strong></p>
+
+<p>Text is classified into units which you can change with the <code>characterClass</code> (scope) setting. For example a C string with <code>%1$ld\n</code> has only two units (<code>%1$ld</code> and <code>\n</code>) for the purpose of selection (<em>Select → Word</em> or double click), word movement (⌥⇠/⌥⇢), and other functions that rely on character types.</p>
+
+<p>TextMate 1.x has <em>Select → Block</em> (⇧⌘B) where a block is found using scope-defined paired characters such as braces, brackets, etc. In 2.0 you can move to begin/end of such block with ⌃⇡/⌃⇣ and the paired characters can be strings (planned to be patterns).</p>
+
+<p>Whenever you select a unit (like anything in the <em>Edit → Select</em> submenu) the selection is “unanchored”, meaning it can be extended to either the left or right side. A minor thing but I find it surprisingly useful, e.g. to select <code>foo(bar‸)</code> we first select the parenthesis with ⇧⌘B and then extend left by one unit with ⌥⇧⇠, previously you couldn’t be sure the last step would extend or simply move the selection end point.</p></li>
+<li><p><strong>Themes</strong></p>
+
+<p>There now is the ability to change font and font size per scope. So you’ll (by default) see that headings in markup are shown with a larger (non-fixed width) font.</p>
+
+<p>You can also change soft wrap on a per-line basis, so soft wrap is e.g. disabled (by default) for diffs embedded in Git commit messages, raw (code) blocks embedded in markup, and enabled for line comments in source.</p>
+
+<p>Soft wrap can be indented. This is also based on scoped settings so list items in markup are indented differently than line comments in source.</p></li>
+<li><p><strong>Foldings</strong></p>
+
+<p>Foldings have been taken out of grammars and are now per-line (via scoped settings). In addition there are two new patterns to allow folding indented blocks.</p></li>
+<li><p><strong>Indent</strong></p>
+
+<p>TextMate is more aggressive about doing indent corrections. This works great when the patterns are well-calibrated but can be disabled with the <code>disableIndentCorrections</code> scope-setting. This setting also change the behavior of re-indented paste to a heuristic that works much better with Python (for which indent corrections are disabled by default).</p></li>
+<li><p><strong>Folder specific settings</strong></p>
+
+<p>Variables and some settings can be set on a folder / file-type basis.</p></li>
+<li><p><strong>Project drawer</strong></p>
+
+<p>The project drawer has been replaced with a file browser sidebar. This file browser has most Finder functions (labels, duplicate, etc.) and does SCM-badging, presently only for Subversion, Git, and Mercurial. In addition it has support for running commands (although somewhat proof-of-concept ATM) and can also do custom data sources, the API is not yet public but an SCM Status data source is included (the smart folder icon) which show SCM status for the current project. This data source works great together with the various SCM bundles.</p></li>
+<li><p><strong>Buffer completion</strong></p>
+
+<p>This has been improved to work with the existing word suffix (in addition to prefix), use the new character class system, etc.</p></li>
+<li><p><strong>Shell invocation</strong></p>
+
+<p><em>Preferences → Terminal</em> allows you to install <code>mate</code> which has a few new options and work when called as <code>sudo mate</code>. In addition you’ll find <code>rmate</code> which is a ruby implementation that you can use on a server over ssh.</p></li>
+<li><p><strong>Search in project / folder</strong></p>
+
+<p>Revamped the old “Find in Folder” and merged it with the regular find dialog. It’s now asynchronous, a lot faster, and more flexible.</p></li>
+<li><p><strong>Format strings</strong></p>
+
+<p>Format strings are ubiquitous in TextMate 2. Even scopes in grammars are format strings (allowing you to capture document content for use in scopes) and format strings are more powerful than the 1.x variant.</p></li>
+<li><p><strong>Scopes</strong></p>
+
+<p>Scopes now contain info beyond document context. For example the <code>attr.scm</code> scopes give info about the current file’s SCM status, allowing using same key equivalent for different SCM systems.</p>
+
+<p>The <code>dyn</code> scopes give info such as “is there a selection” (allowing to change key bindings only when there is or isn’t a selection), an example of this is overloading <code>{</code> to “wrap selection” (nicely), but leave the key alone when there is no selection. Another use-case could be to change tab to shift the text right (indent) only when there is a selection (common user request that I don’t plan to make native behavior).</p>
+
+<p>You can also add your own stuff to the scope via the file and folder specific settings which allows e.g. adding <code>attr.test</code> to your unit tests and overload ⌘R for that scope or have certain snippets only fire in that scope (e.g. we have a <code>main⇥</code> snippet for C which inserts the venerable main function — makes sense to overload this for (C) unit tests, which generally would be regular C files).</p></li>
+<li><p><strong>Scope selectors</strong></p>
+
+<p>The caret is actually between two scopes, the left and right characters scope. In 2.0 we finally allow you to explicitly target either side (or both), making the firing of certain overloads more correct. There are also a few other new things related to scope selectors, but a lot of it is still only implemented in the parser, so will delay the thorough explanation of this.</p></li>
+<li><p><strong>Commands</strong></p>
+
+<p>Commands can require other bundles which allow them to reference support files in the required bundle. They can also declare which shell commands they need which means better error handling and also having TextMate try to find the required commands. Failing commands result in more graceful error dialogs. The output options for a command has been split into location and format. Commands can run without a document.</p></li>
+<li><p><strong>Grammars</strong></p>
+
+<p>Grammars can be injected into existing scopes, for example there are now grammars for marking URLs, <code>TODO</code>, and similar which are injected into comments and other appropriate places.</p>
+
+<p>Various other things related to parsing which require its own post.</p></li>
+<li><p><strong>Semantic classes</strong></p>
+
+<p>Bundle items can now be assigned a semantic class. This allows us to query for e.g. <code>action.build || action.run</code> (for current scope) to find an appropriate build command (with a run command as fallback). The advantage of this is manyfold: ability to do tool bars, palettes, and unified key bindings, for example we have a single <em>proxy item</em> bound to ⌘Y which does a query for <code>action.scm</code> finding all the SCM actions relevant for the current scope (remember scope now include SCM info, making it pick the proper SCM system).</p>
+
+<p>Proxy items are a new construct but still at the proof-of-concept level, so more about this later.</p>
+
+<p>TextMate itself will also do queries at various times, for example when opening a file it queries for import commands, where we include several to decompile AppleScript, pretty-print binary property lists, and similar. It also uses this system on save, so by default we now make new scripts with a shebang executable after save.</p>
+
+<p>Like proxy items, this system is in its infancy.</p></li>
+<li><p><strong>Managed bundles</strong></p>
+
+<p>When you open a file type for which you have no bundle, you’ll be asked to install one (if TextMate knows of one). Bundles are automatically kept up to date and you can see installed bundles (and install more) in <em>Preferences → Bundles</em>.</p></li>
+<li><p><strong>Session restore</strong></p>
+
+<p>TextMate restores the full session which includes unsaved changes incase of abnormal exit. Hold shift (⇧) during launch to bypass.</p></li>
+<li><p><strong>Foreign Input Modes</strong></p>
+
+<p>Display of CJK and “advanced” input modes is now be supported (although only limited testing has been done).</p></li>
+</ul>
+</body>
+</html>
